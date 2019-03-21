@@ -119,6 +119,9 @@ class ExaSQLExportThread(ExaSQLThread):
         if self.params.get('with_column_names'):
             query += '\nWITH COLUMN NAMES'
 
+        if self.params.get('top_comment'):
+            query = self.connection.format.safe_comment(self.params['top_comment']) + '\n' + query
+
         self.connection.execute(query)
 
 
@@ -161,6 +164,9 @@ class ExaSQLImportThread(ExaSQLThread):
 
         if self.params.get('column_delimiter'):
             query += '\nCOLUMN DELIMITER = ' + self.connection.format.quote(self.params['column_delimiter'])
+
+        if self.params.get('top_comment'):
+            query = self.connection.format.safe_comment(self.params['top_comment']) + '\n' + query
 
         self.connection.execute(query)
 
