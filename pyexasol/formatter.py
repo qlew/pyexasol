@@ -6,6 +6,7 @@ class ExaFormatter(string.Formatter):
     safe_ident_regexp = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
     safe_decimal_regexp = re.compile(r'^(\+|-)?[0-9]+(\.[0-9]+)?$')
     safe_float_regexp = re.compile(r'^(\+|-)?[0-9]+(\.[0-9]+((e|E)(\+|-)[0-9]+)?)?$')
+    safe_comment_regexp = re.compile(r'^((?!\/\*).)*$')
 
     def __init__(self, connection):
         self.connection = connection
@@ -118,6 +119,19 @@ class ExaFormatter(string.Formatter):
             raise ValueError(f'Value [{val}] is not a safe integer')
 
         return val
+
+    @classmethod
+    def safe_comment(cls, val):
+        if val is None:
+            return ''
+
+        val = str(val)
+        
+        if not cls.safe_comment_regexp.match(val):
+            raise ValueError(f'Value {val} is not a safe comment')
+
+        return f'/*{val}*/' 
+
 
     def __repr__(self):
         return f'<{self.__class__.__name__} session_id={self.connection.session_id()}>'
